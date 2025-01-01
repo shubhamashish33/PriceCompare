@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import urllib
 
 # URL of the product page
-url = "https://www.flipkart.com/cmf-nothing-100-w-power-gan-5-3-port-mobile-charger-detachable-cable/p/itm2f0f45bd04629?pid=ACCH4H7AJHNEYNXA&lid=LSTACCH4H7AJHNEYNXAFF4GNF&marketplace=FLIPKART&q=cmf+charger&store=tyy%2F4mr%2Ftp2&srno=s_1_4&otracker=AS_QueryStore_OrganicAutoSuggest_1_5_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_5_na_na_na&fm=search-autosuggest&iid=f179953f-388b-48e4-8ce3-c70e78455de0.ACCH4H7AJHNEYNXA.SEARCH&ppt=sp&ppn=sp&ssid=p4iffod0dc0000001735569958496&qH=f36109ce0fe857e2"
+url = "https://www.flipkart.com/qz-4k-60hz-9-1-usb-c-hub-hdmi-4k-60hz-type-c-dock-laptop-docking-station-qzhb72-usb/p/itmfbe923a0d075c?pid=USGH58G4N6ZSDXEQ&lid=LSTUSGH58G4N6ZSDXEQXWWXTA&marketplace=FLIPKART&q=qz+hub&store=6bo&srno=s_1_13&otracker=search&otracker1=search&fm=Search&iid=cf28d2cd-62d9-4190-8a32-ccce1cab8409.USGH58G4N6ZSDXEQ.SEARCH&ppt=sp&ppn=sp&ssid=5l3bssjg2o0000001735748175987&qH=f8ad4d01973bb839"
 
 # Set headers to mimic a browser
 # headers = {
@@ -18,7 +18,7 @@ if response.status_code == 200:
     
     soup = BeautifulSoup(response.text,'html.parser')
 
-    title = soup.find('h1').text.strip().replace("/", "")
+    title = soup.find('h1').text.strip().replace("/", "").replace("[", "").replace("]", "")
     encoded_query = urllib.parse.quote_plus(title)
 
     print(f"Product Name : {encoded_query}")
