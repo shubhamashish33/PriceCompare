@@ -1,3 +1,4 @@
+import __main__
 from bs4 import BeautifulSoup
 import requests
 import time
@@ -77,12 +78,17 @@ def search_flipkart(product_name):
     else:
         print(f"Failed to fetch the page. Status code: {response.status_code}")
         return None
+    
 
-# Example usage
-amazon_url = "https://www.amazon.in/SAMSUNG-Galaxy-S23-Graphite-Storage/dp/B0CJXQX3MB?th=1"
-product_name, product_price = fetch_amazon_product_details(amazon_url)
-if product_name:
-    search_flipkart(product_name)
+print(__name__)
+# The line `if __name__ == "__main__":` is a common Python idiom used to check if the current script
+# is being run directly by the Python interpreter.
+if __name__ == "__main__": 
+    # Example usage
+    amazon_url = "https://www.amazon.in/gp/product/B0DLW44CGS/ref=s9_bw_cg_Budget_2d1_w"
+    product_name, product_price = fetch_amazon_product_details(amazon_url)
+    if product_name:
+        search_flipkart(product_name)
 
-# Introduce a delay to avoid being flagged as a bot
-time.sleep(2)
+    # Introduce a delay to avoid being flagged as a bot
+    time.sleep(2)
