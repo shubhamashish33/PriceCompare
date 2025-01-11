@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import time
+import json
 
 def fetch_amazon_product_details(url):
     headers = {
@@ -46,30 +47,36 @@ def search_flipkart(product_name):
     }
     
     session = requests.Session()
-    print(search_url);
-    # response = session.get(search_url, headers=headers)
-
+    print("Search URL: ", search_url)
+    response = session.get(search_url, headers=headers)
     
-    # if response.status_code == 200:
-    #     soup = BeautifulSoup(response.text, 'html.parser')
-    #     print(soup)
-    #     # product_link = soup.find('a', class_='_1fQZEK')
-    #     products = soup.find_all("a",class_='CGtC98')
-    #     # print(products);
-    #     # print(products[0]);
-    #     print(products[0].get_text())
-    #     ref = products[0].get('href')
-    #     print("ref", ref)
-    #     # if product_link:
-    #     #     flipkart_link = "https://www.flipkart.com" + product_link['href']
-    #     #     print("Flipkart Link: ", flipkart_link)
-    #     #     return flipkart_link
-    #     # else:
-    #     #     print("Product link not found on Flipkart.")
-    #     #     return None
-    # else:
-    #     print(f"Failed to fetch the page. Status code: {response.status_code}")
-    #     return None
+    if response.status_code == 200:
+        try:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            script_tag = soup.find('script', {'id': 'jsonLD'})
+            if script_tag:
+                data = json.loads(script_tag.string)
+                itemListElement = data.get("itemListElement")
+                if itemListElement and len(itemListElement) > 0:
+                    product_link = itemListElement[0].get('url')
+                    if product_link:
+                        print("Product Link: ", product_link)
+                        return product_link
+                    else:
+                        print("Product link not found in itemListElement.")
+                        return None
+                else:
+                    print("itemListElement not found in JSON data.")
+                    return None
+            else:
+                print("JSON script tag not found.")
+                return None
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return None
+    else:
+        print(f"Failed to fetch the page. Status code: {response.status_code}")
+        return None
 
 # Example usage
 amazon_url = "https://www.amazon.in/SAMSUNG-Galaxy-S23-Graphite-Storage/dp/B0CJXQX3MB?th=1"
