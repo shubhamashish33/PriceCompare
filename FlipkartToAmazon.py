@@ -5,10 +5,9 @@ import urllib
 
 from amazonToFlipkart import fetch_amazon_product_details
 
-# URL of the product page
 
-def flipkart_to_amazon(url):
-    # Make a GET request
+def get_flipkart_product_details(url):
+
     response = requests.get(url)
 
     # Check if the request was successful
@@ -17,9 +16,10 @@ def flipkart_to_amazon(url):
         soup = BeautifulSoup(response.text,'html.parser')
 
         title = soup.find('h1').text.strip().replace("/", "").replace("[", "").replace("]", "")
+
         encoded_query = urllib.parse.quote_plus(title)
 
-        print(f"Product Name : {encoded_query}")
+        print(f"Product Name : {title}")
 
         pricing = soup.find("div", {"class": "hl05eU"}).text.strip()
 
@@ -33,14 +33,17 @@ def flipkart_to_amazon(url):
 
         print(f"Price: {price}")
 
+        return encoded_query,title
+    
     else:
         print(f"Failed to fetch the page. Status code: {response.status_code}")
 
 
-    # Format search URL for Amazon
+def fetch_amazon_product_details(encoded_query,title):
+
     amazon_url = f"https://www.amazon.in/s/ref=nb_sb_noss?field-keywords={encoded_query}"
 
-    print(f"Amazon URL: {amazon_url}")
+    print(f"Amazon Serarch URL: {amazon_url}")
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -53,24 +56,31 @@ def flipkart_to_amazon(url):
 
     time.sleep(2)
 
-
     # Parse the results
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, "html.parser")  
-        # print(soup)  
-        # Extract product titles from the search results
         products = soup.find_all("a", class_="a-link-normal s-no-hover s-underline-text s-underline-link-text s-link-style a-text-normal")
-        ref = products[0].get('href')
-        link=f"https://www.amazon.in{ref}"
-        print(link)
+        for product in products:
+            ref=product.get("href")
+            if ref.startswith("/sspa/"): # Sponsored products filter out
+                continue
+            else:
+                link=f"https://www.amazon.in{ref}"
+                print("Amazon Product Link: ", link)
+                break
         time.sleep(2)
-
-        value = fetch_amazon_product_details(link)
-        # for product in products[:5]:  # Limit to first 5 results
-        #     print(product.get_text())
     else:
         print(f"Failed to fetch Amazon search results. Status code: {response.status_code}")
     
 
-productLink = "https://www.flipkart.com/redmi-a4-5g-only-jio-sim-sparkle-purple-128-gb/p/itmf6a8b6a3d4395?pid=MOBH6YHDGD57AVHX&lid=LSTMOBH6YHDGD57AVHXCXID0O&marketplace=FLIPKART&q=Redmi+A4+5G&store=tyy%2F4io&srno=s_1_1&otracker=search&otracker1=search&fm=organic&iid=15869eca-b36c-4c06-a5a9-4f8f5986bc88.MOBH6YHDGD57AVHX.SEARCH&ppt=pp&ppn=pp&ssid=nx4o205vz40000001736628498934&qH=422401bae45a578b"
-flipkart_to_amazon(productLink)
+def flipkart_to_amazon(url):
+    
+    encoded_query,title = get_flipkart_product_details(url)
+
+    fetch_amazon_product_details(encoded_query,title)
+
+if __name__ == "__main__":
+    # URL of the product page
+    productLink = "https://www.flipkart.com/logitech-mx-master-3s-wireless-touch-mouse/p/itm271ade01ff274?pid=ACCGFPFCAFGREFHZ&lid=LSTACCGFPFCAFGREFHZMWXUSH&marketplace=FLIPKART&q=mx+master+3s&store=6bo%2Fai3%2F2ay&srno=s_1_1&otracker=AS_QueryStore_OrganicAutoSuggest_1_12_na_na_ps&otracker1=AS_QueryStore_OrganicAutoSuggest_1_12_na_na_ps&fm=search-autosuggest&iid=847c1894-9948-43d8-86be-a7fe149a41a0.ACCGFPFCAFGREFHZ.SEARCH&ppt=sp&ppn=sp&ssid=nq91tj9xkw0000001736691420158&qH=44b100c8bdb752b1"
+
+    flipkart_to_amazon(productLink)

@@ -90,10 +90,11 @@ def search_flipkart(product_name):
         return None
 
 # Example usage
-amazon_url = "https://www.amazon.in/SAMSUNG-Galaxy-S23-Graphite-Storage/dp/B0CJXQX3MB?th=1"
-product_name, product_price = fetch_amazon_product_details(amazon_url)
-if product_name:
-    search_flipkart(product_name)
+if __name__ == "__main__":
+    amazon_url = "https://www.amazon.in/Portable-Protection-Compatible-Warranty-SDSSDE30-1T00-G26/dp/B0C5JQ68FY/ref=pd_ci_mcx_mh_mcx_views_0_title?pd_rd_w=ICHk5&content-id=amzn1.sym.529d03fa-575b-4f2b-a4d6-0c02eabf0a7e%3Aamzn1.symc.45dc5f4c-d617-4dba-aa26-2cadef3da899&pf_rd_p=529d03fa-575b-4f2b-a4d6-0c02eabf0a7e&pf_rd_r=7CT4127R875GRSYR6S08&pd_rd_wg=NCtCU&pd_rd_r=99719cc8-5c21-460e-a62c-8a06c5caab0d&pd_rd_i=B0C5JQ68FY&th=1"
+    product_name, product_price = fetch_amazon_product_details(amazon_url)
+    if product_name:
+        search_flipkart(product_name)
 
-# Introduce a delay to avoid being flagged as a bot
-time.sleep(2)
+    # Introduce a delay to avoid being flagged as a bot
+    time.sleep(2)
