@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import json
-from fuzzywuzzy import fuzz
 
 def fetch_amazon_product_details(url):
     headers = {
@@ -40,9 +39,7 @@ def fetch_amazon_product_details(url):
         return None, None
 
 def search_flipkart(product_name):
-    # Limit the product name to the first two or three words
-    limited_product_name = ' '.join(product_name.split()[:3])
-    search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(limited_product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
+    search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
         'Accept-Language': 'en-US,en;q=0.9',
@@ -62,23 +59,15 @@ def search_flipkart(product_name):
                 data = json.loads(script_tag.string)
                 itemListElement = data.get("itemListElement")
                 if itemListElement and len(itemListElement) > 0:
-                    best_match = None
-                    highest_ratio = 0
-                    for item in itemListElement:
-                        item_name = item.get('name', '').lower()
-                        ratio = fuzz.partial_ratio(limited_product_name.lower(), item_name)
-                        if ratio > highest_ratio:
-                            highest_ratio = ratio
-                            best_match = item
-                    if best_match:
-                        product_link = best_match.get('url')
-                        if product_link:
-                            print("\nProduct Link 🔗: ", product_link)
-                            return product_link
-                    print("Matching product link not found on Flipkart.")
-                    return None
+                    product_link = itemListElement[0].get('url')
+                    if product_link:
+                        print("Product Link: ", product_link)
+                        return product_link
+                    else:
+                        print("Product link not found in itemListElement.")
+                        return None
                 else:
-                    print("Product not found in JSON data.")
+                    print("itemListElement not found in JSON data.")
                     return None
             else:
                 print("JSON script tag not found.")
