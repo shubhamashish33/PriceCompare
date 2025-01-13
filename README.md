@@ -18,6 +18,4 @@ A simple Python script to compare product prices between different e-commerce pl
 
 ## Usage
 
-- **amazonToFlipkart.py**: Compare prices from Amazon to Flipkart.
-- **FlipkartToAmazon.py**: Compare prices from Flipkart to Amazon.
-
+- Compare prices across amazon and flipkart.
