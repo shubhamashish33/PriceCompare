@@ -1,51 +1,39 @@
-from bs4 import BeautifulSoup
-import requests
+import time
+from Amazon import Amazon_Flipkart, Amazon_ProductDetails
+from Flipkart import Flipkart_Amazon, Flipkart_ProductDetails
 
-def fetch_amazon_product_details(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Referer': 'https://www.google.com/'
-    }
-    
-    session = requests.Session()
-    response = session.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        title_section = soup.find('span', id='productTitle')
-        if title_section:
-            product_title = title_section.text.strip()
-        else:
-            print("Title section not found.")
-            return None, None
-        
-        price_section = soup.find('span', id="tp_price_block_total_price_ww")
-        if price_section:
-            product_price = price_section.text.strip()
-        else:
-            print("Price not found.")
-            product_price = None
-        
-        return product_title, product_price
-    else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
-        return None, None
-    
-def get_flipkart_product_details(url):
+if __name__ == "__main__":
+    url = input("Enter the URL of the product page: ")
 
-    response = requests.get(url)
-    if response.status_code == 200:     
-        soup = BeautifulSoup(response.text,'html.parser')
-        title = soup.find('h1').text.strip().replace("/", "").replace("[", "").replace("]", "")
-        pricing = soup.find("div", {"class": "hl05eU"}).text.strip()
-        cleaned_price = pricing.lstrip("₹")
-        price_parts = cleaned_price.split("₹")
-        price = price_parts[0].replace(",", "")
-        return title,price
-    
+    if url.__contains__("flipkart"):
+        flpkrt_title,flpkrt_price = Flipkart_ProductDetails(url)    
+        print(f"Flipkart Product Name ----> {flpkrt_title}\n")
+        print(f"Flipkart Product Price ----> {flpkrt_price}\n")
+
+        amzn_redirect_link = Flipkart_Amazon(flpkrt_title)
+        if(amzn_redirect_link):
+            print(f"Amazon Product Link -----> {amzn_redirect_link}\n")
+            amzn_title,amzn_price = Amazon_ProductDetails(amzn_redirect_link)
+            print(f"Amazon Product Name -----> {amzn_title}\n")
+            print(f"Amazon Product Price -----> {amzn_price}\n")
+        else:
+            print("Product not found on Amazon.")
     else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
+        amzn_title,amzn_price = Amazon_ProductDetails(url)
+        print(f"Amazon Product Name -----> {amzn_title}\n")
+        print(f"Amazon Product Price -----> {amzn_price}\n")
+
+        flpkrt_redirect_link = Amazon_Flipkart(amzn_title)
+
+        if(flpkrt_redirect_link):
+            print(f"Flipkart Product Link -----> {flpkrt_redirect_link}\n")
+            flpkrt_title,flpkrt_price = Flipkart_ProductDetails(flpkrt_redirect_link)
+            print(f"Flipkart Product Name ----> {flpkrt_title}\n")
+            print(f"Flipkart Product Price ----> {flpkrt_price}\n")
+        else:
+            print("Product not found on Flipkart.")
+    time.sleep(2)
+
+
 
 
