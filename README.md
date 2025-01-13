@@ -1,21 +1,47 @@
-
 # PriceCompare
 
-A simple Python script to compare product prices between different e-commerce platforms (Amazon and Flipkart).
+**PriceCompare** is a Python-based tool that allows users to compare product prices between two major e-commerce platforms: Amazon and Flipkart. It features a user-friendly graphical interface (UI) for seamless interaction. 🎉🌐🔄
 
-## Features
+## Features 🔬🛠️🎁
 
-- Compare product prices between Amazon and Flipkart.
-- Easy to use and configure.
+- **Price Comparison**: Fetches and compares prices of specified products from Amazon and Flipkart.
+- **Graphical User Interface (UI)**: Intuitive and easy-to-navigate UI for enhanced user experience.
 
-## Setup
+## Installation 🔧🌍📊
 
-1. Clone the repository:  
-   `git clone https://github.com/rghvgrv/PriceCompare.git`
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/rghvgrv/PriceCompare.git
+   ```
 
-2. Install the required libraries:  
-   `pip install -r requirements.txt`
+2. **Navigate to the project directory**:
+   ```bash
+   cd PriceCompare
+   ```
 
-## Usage
+3. **Install the required dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- Compare prices across amazon and flipkart.
+## Usage 🔍🚀🎮
+
+1. **Run the main script**:
+   ```bash
+   python main.py
+   ```
+
+2. **Use the graphical interface**:
+   - Enter the product name in the provided input field.
+   - View price comparisons from Amazon and Flipkart displayed side by side.
+
+## Contributing 📦🔄🔑
+
+Contributions are welcome! Please fork this repository and submit a pull request with your changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
+
+## Acknowledgements 👨‍💼🏅🙏
+
+Special thanks to the contributors of this project:
+
+- [Shubham Ashish](https://github.com/shubhamashish33)
+
