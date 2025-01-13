@@ -11,75 +11,80 @@ headers = {
     }
 def Amazon_Flipkart(product_name):
     # Limit the product name to the first two or three words
-    limited_product_name = ' '.join(product_name.split()[:3])
-    search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(limited_product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
-    
-    session = requests.Session()
-    response = session.get(search_url, headers=headers)
-    
-    if response.status_code == 200:
-        try:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            script_tag = soup.find('script', {'id': 'jsonLD'})
-            if script_tag:
-                data = json.loads(script_tag.string)
-                itemListElement = data.get("itemListElement")
-                if itemListElement and len(itemListElement) > 0:
-                    best_match = None
-                    highest_ratio = 0
-                    for item in itemListElement:
-                        item_name = item.get('name', '').lower()
-                        ratio = fuzz.partial_ratio(limited_product_name.lower(), item_name)
-                        if ratio > highest_ratio:
-                            highest_ratio = ratio
-                            best_match = item
-                    if best_match:
-                        product_link = best_match.get('url')
-                        if product_link:
-                            return product_link
-                    print("Matching product link not found on Flipkart.")
-                    return None
+    try :
+        limited_product_name = ' '.join(product_name.split()[:3])
+        search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(limited_product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
+        
+        session = requests.Session()
+        response = session.get(search_url, headers=headers)
+        
+        if response.status_code == 200:
+            try:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                script_tag = soup.find('script', {'id': 'jsonLD'})
+                if script_tag:
+                    data = json.loads(script_tag.string)
+                    itemListElement = data.get("itemListElement")
+                    if itemListElement and len(itemListElement) > 0:
+                        best_match = None
+                        highest_ratio = 0
+                        for item in itemListElement:
+                            item_name = item.get('name', '').lower()
+                            ratio = fuzz.partial_ratio(limited_product_name.lower(), item_name)
+                            if ratio > highest_ratio:
+                                highest_ratio = ratio
+                                best_match = item
+                        if best_match:
+                            product_link = best_match.get('url')
+                            if product_link:
+                                return product_link
+                        print("Matching product link not found on Flipkart.")
+                        return None
+                    else:
+                        print("Product not found in JSON data.")
+                        return None
                 else:
-                    print("Product not found in JSON data.")
+                    print("JSON script tag not found.")
                     return None
-            else:
-                print("JSON script tag not found.")
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON: {e}")
                 return None
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
+        else:
+            print(f"Failed to fetch the page. Status code: {response.status_code}")
             return None
-    else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
+    except Exception as e:
         return None
 
 def Amazon_ProductDetails(url):
-    session = requests.Session()
-    response = session.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        title_section = soup.find('span', id='productTitle')
-        if title_section:
-            product_title = title_section.text.strip()
+    try:
+        session = requests.Session()
+        response = session.get(url, headers=headers)
+        
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            title_section = soup.find('span', id='productTitle')
+            if title_section:
+                product_title = title_section.text.strip()
+            else:
+                print("Title section not found.")
+                return None, None
+            
+            price_section = soup.find('span', id="tp_price_block_total_price_ww")
+            if price_section:
+                product_price = price_section.text.strip()
+                parts = product_price.split('.')
+                if len(parts) > 2:
+                    formated_price = parts[0][1:]
+            else:
+                print("Price not found.")
+                product_price = None
+            
+            return product_title, formated_price
         else:
-            print("Title section not found.")
+            print(f"Failed to fetch the page. Status code: {response.status_code}")
             return None, None
-        
-        price_section = soup.find('span', id="tp_price_block_total_price_ww")
-        if price_section:
-            product_price = price_section.text.strip()
-            parts = product_price.split('.')
-            if len(parts) > 2:
-                formated_price = parts[0][1:]
-        else:
-            print("Price not found.")
-            product_price = None
-        
-        return product_title, formated_price
-    else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
-        return None, None
-    
+    except Exception as e:
+        return None, None;
 
 # Example usage
 if __name__ == "__main__":
