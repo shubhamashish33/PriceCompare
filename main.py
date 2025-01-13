@@ -15,24 +15,28 @@ def main():
         flpkrt_title, flpkrt_price = Flipkart_ProductDetails(url)
         result["Flipkart"]["Title"] = flpkrt_title
         result["Flipkart"]["Price"] = flpkrt_price
+        result["Flipkart"]["FlipkartLink"] = url
 
         amzn_redirect_link = Flipkart_Amazon(flpkrt_title)
         if amzn_redirect_link:
             amzn_title, amzn_price = Amazon_ProductDetails(amzn_redirect_link)
             result["Amazon"]["Title"] = amzn_title
             result["Amazon"]["Price"] = amzn_price
+            result["Amazon"]["AmazonLink"] = amzn_redirect_link
         else:
             result["Amazon"] = None
     else:
         amzn_title, amzn_price = Amazon_ProductDetails(url)
         result["Amazon"]["Title"] = amzn_title
         result["Amazon"]["Price"] = amzn_price
+        result["Amazon"]["AmazonLink"] = url;
 
         flpkrt_redirect_link = Amazon_Flipkart(amzn_title)
         if flpkrt_redirect_link:
             flpkrt_title, flpkrt_price = Flipkart_ProductDetails(flpkrt_redirect_link)
             result["Flipkart"]["Title"] = flpkrt_title
             result["Flipkart"]["Price"] = flpkrt_price
+            result ["Flipkart"]["FlipkartLink"] = flpkrt_redirect_link
         else:
             result["Flipkart"] = None
 

@@ -69,10 +69,8 @@ def Amazon_ProductDetails(url):
         if price_section:
             product_price = price_section.text.strip()
             parts = product_price.split('.')
-            print(product_price)
             if len(parts) > 2:
-                formated_price = parts[0] + "." + parts[1][:2]
-                print(formated_price)
+                formated_price = parts[0][1:]
         else:
             print("Price not found.")
             product_price = None
