@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import urllib
 
 def Flipkart_Amazon(title):
-    
     encoded_query = urllib.parse.quote_plus(title)
     amazon_url = f"https://www.amazon.in/s/ref=nb_sb_noss?field-keywords={encoded_query}"
 
@@ -34,7 +33,6 @@ def Flipkart_Amazon(title):
         print(f"Failed to fetch Amazon search results. Status code: {response.status_code}")
 
 def Flipkart_ProductDetails(url):
-
     response = requests.get(url)
     if response.status_code == 200:     
         soup = BeautifulSoup(response.text,'html.parser')
@@ -44,7 +42,6 @@ def Flipkart_ProductDetails(url):
         price_parts = cleaned_price.split("₹")
         price = price_parts[0].replace(",", "")
         return title,price
-    
     else:
         print(f"Failed to fetch the page. Status code: {response.status_code}")
 
