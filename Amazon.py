@@ -3,16 +3,16 @@ import requests
 import json
 from fuzzywuzzy import fuzz
 
-def Amazon_Flipkart(product_name):
-    # Limit the product name to the first two or three words
-    limited_product_name = ' '.join(product_name.split()[:3])
-    search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(limited_product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
-    headers = {
+headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br',
         'Referer': 'https://www.google.com/'
     }
+def Amazon_Flipkart(product_name):
+    # Limit the product name to the first two or three words
+    limited_product_name = ' '.join(product_name.split()[:3])
+    search_url = f"https://www.flipkart.com/search?q={requests.utils.quote(limited_product_name)}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off"
     
     session = requests.Session()
     response = session.get(search_url, headers=headers)
@@ -53,13 +53,6 @@ def Amazon_Flipkart(product_name):
         return None
 
 def Amazon_ProductDetails(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Referer': 'https://www.google.com/'
-    }
-    
     session = requests.Session()
     response = session.get(url, headers=headers)
     
@@ -75,11 +68,14 @@ def Amazon_ProductDetails(url):
         price_section = soup.find('span', id="tp_price_block_total_price_ww")
         if price_section:
             product_price = price_section.text.strip()
+            parts = product_price.split('.')
+            if len(parts) > 2:
+                formated_price = parts[0] + "." + parts[1][:2]
         else:
             print("Price not found.")
             product_price = None
         
-        return product_title, product_price
+        return product_title, formated_price
     else:
         print(f"Failed to fetch the page. Status code: {response.status_code}")
         return None, None
