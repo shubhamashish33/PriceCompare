@@ -34,10 +34,10 @@ const App = () => {
     }
   };
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-IN', { // Use 'en-IN' for Indian numbering format
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'INR', // You can change this to 'USD', 'EUR', etc., based on your requirement
-      maximumFractionDigits: 0, // No decimals
+      currency: 'INR',
+      maximumFractionDigits: 0,
     }).format(value);
   };
   
